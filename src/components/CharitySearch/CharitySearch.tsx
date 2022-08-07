@@ -1,6 +1,7 @@
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import React from 'react';
 
+import { useDebounce } from './useDebounce';
 import { useGetCharities } from './useGetCharities';
 
 export type CharityProps = {
@@ -12,9 +13,13 @@ export type CharityProps = {
 
 export const CharitySearch = (): JSX.Element => {
   const [searchTerm, setSearchTerm] = React.useState('');
+  const debouncedSearch = useDebounce(searchTerm, 500);
   const [ratedOnly, setRatedOnly] = React.useState(false);
-  const { isLoading, isError, error, data } = useGetCharities(searchTerm, ratedOnly);
+  const { isLoading, isError, error, data } = useGetCharities(debouncedSearch, ratedOnly);
   const handleCheckboxChange = () => setRatedOnly(!ratedOnly);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setSearchTerm(e.target.value);
+
   return (
     <>
       <form
@@ -30,7 +35,7 @@ export const CharitySearch = (): JSX.Element => {
             value={searchTerm}
             placeholder=""
             type="text"
-            onChange={(event) => setSearchTerm(event.target.value)}
+            onChange={handleSearchChange}
           />
         </label>
         {/* <ClearButton updateSearch={updateSearch} searchTerm={searchTerm} /> */}
