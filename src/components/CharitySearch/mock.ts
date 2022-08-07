@@ -1,8 +1,7 @@
-// src/mocks/handlers.js
 import { rest } from 'msw';
 
 export const handlers = [
-  rest.get('https://charity-search-303800.ue.r.appspot.com/', (_req, res, ctx) => {
+  rest.get('https://api.github.com/users/nickFalcone/followers', (_req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json([
