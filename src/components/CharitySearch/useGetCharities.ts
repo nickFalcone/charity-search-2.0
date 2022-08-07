@@ -14,7 +14,7 @@ export const useGetCharities = (
   }
 
   return useQuery(
-    ['charities', searchTerm],
+    ['charities', searchTerm, rated],
     () =>
       fetch(
         `https://charity-search-303800.ue.r.appspot.com/?search=${searchTerm}&rated=${rated}`,
