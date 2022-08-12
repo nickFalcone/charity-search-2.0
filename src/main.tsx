@@ -6,7 +6,7 @@ import { createRoot } from 'react-dom/client';
 
 import { App } from './App';
 
-// mock response when in test
+// Mock API in 'test' or 'development' environments
 if (process.env.NODE_ENV === 'test') {
   worker.start();
 }

@@ -1,16 +1,26 @@
-// // ./test-utils.tsx sets up a custom render that could be
-// // used to access global context providers, data stores etc.
-// // https://testing-library.com/docs/react-testing-library/setup#custom-render
+/* eslint-disable @typescript-eslint/no-empty-function */
+// ./test-utils.tsx sets up a custom render that could be
+// used to access global context providers, data stores etc.
+// https://testing-library.com/docs/react-testing-library/setup#custom-render
 
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render } from '@testing-library/react';
+import { act, render, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import React from 'react';
 
 import { screen } from '../../../test-utils';
 import { handlers } from '../../mocks/handlers';
-// import { GitHubProfile } from './CharitySearch';
+import { CharitySearch } from './CharitySearch';
+
+// Mock ResizeObserver
+// https://github.com/ZeeCoder/use-resize-observer/issues/40#issuecomment-644536259
+class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
 
 const queryCache = new QueryCache();
 const queryClient = new QueryClient({
@@ -43,16 +53,24 @@ afterEach(() => {
   queryCache.clear();
 });
 
-describe('GitHubProfile', () => {
-  test.skip('it renders 2 mocked followers', async () => {
+describe('Charity list', () => {
+  window.ResizeObserver = ResizeObserver;
+  test('it renders 100 charities from the mock', async () => {
     server.use(...handlers);
 
     render(
       <QueryClientProvider client={queryClient}>
-        {/* <GitHubProfile user="nickFalcone" /> */}
+        <CharitySearch />
       </QueryClientProvider>,
     );
-    const followers = await screen.findAllByRole('listitem');
-    expect(followers.length).toBe(2);
+    const searchTerm = screen.getByRole('textbox', { name: /Search charities/i });
+    act(() => {
+      userEvent.type(searchTerm, 'test');
+    });
+    await waitFor(async () => {
+      const charityList = screen.getByTestId('charityList');
+      const charities = await within(charityList).findAllByRole('listitem');
+      expect(charities.length).toBe(100);
+    });
   });
 });

@@ -25,12 +25,11 @@ export const CharitySearch = (): JSX.Element => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setSearchTerm(e.target.value);
 
-  // const Label = styled.label`
-  //   color: 'white',
-  //   font-size: 15,
-  //   line-height: 1,
-  //   user-select: 'none',
-  // `;
+  const Label = styled('label', {
+    fontSize: 15,
+    lineHeight: 1,
+    userSelect: 'none',
+  });
 
   const StyledSwitch = styled(SwitchPrimitive.Root, {
     all: 'unset',
@@ -65,9 +64,11 @@ export const CharitySearch = (): JSX.Element => {
         onSubmit={(event) => {
           event.preventDefault();
         }}>
+        <Label htmlFor="searchTerm">Search charities</Label>
         <input
           id="searchTerm"
           className="search-input"
+          name="search term"
           value={searchTerm}
           placeholder=""
           type="text"
@@ -78,9 +79,9 @@ export const CharitySearch = (): JSX.Element => {
         {/* <ClearButton updateSearch={updateSearch} searchTerm={searchTerm} /> */}
         {/* <RatingSelect /> */}
         <br />
-        <label htmlFor="searchTerm">Show only rated charities</label>
+        <Label htmlFor="searchRated">Show only rated charities</Label>
         <StyledSwitch
-          id="searchTerm"
+          id="searchRated"
           defaultChecked={false}
           checked={ratedOnly}
           onCheckedChange={handleCheckboxChange}>
@@ -106,7 +107,7 @@ export const CharitySearch = (): JSX.Element => {
       {data && (
         <>
           {data?.length > 0 && <p>Results: {data.length}</p>}
-          <ul>
+          <ul data-testid="charityList">
             {data?.map(({ charityName, charityNavigatorURL, ein, mission }) => {
               return (
                 <li key={ein}>
